@@ -1,0 +1,294 @@
+org: nguyenbason
+app: my-serverless-app
+service: course-management
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-plugin-tracing
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  lambdaHashingVersion: '20230710'
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  tracing: 
+    lambda: true
+    apiGateway: true
+
+  # Use these variables in the functions and resouorces section below. For example, 
+  # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
+  environment:
+    COURSES_TABLE: Serverless-course-management-${self:provider.stage}
+    COURSES_CREATED_AT_INDEX: CreatedAtIndex
+    ATTACHMENT_S3_BUCKET: udacity-serverless-self-course-management-images-${self:provider.stage}
+    SIGNED_URL_EXPIRATION: 300
+    JWKS_URL: 'https://dev-jcq8kmrunggal650.us.auth0.com/.well-known/jwks.json'
+    #PROJECT_NAME: serverless-app
+
+custom:
+  
+  documentation:
+    api:
+      info:
+        version: v0.0.1
+        title: COURSE MANAGEMENT API
+        description: Udacity Serverles API 
+    models:
+      - name: CourseCreateRequest
+        contentType: application/json
+        schema: ${file(models/create-course-model.json)}
+      - name: CourseUpdateRequest
+        contentType: application/json
+        schema: ${file(models/update-course-model.json)}
+
+  logs:
+    # Enable API Gateway logs
+    restApi: true        
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - xray:PutTelemetryRecords
+            - xray:PutTraceSegments
+          Resource: "*"    
+
+functions:
+
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"          
+
+  # Provide iamRoleStatements property for performing Actions on DynamoDB
+  GetCourses:
+    handler: src/lambda/http/getCourses.handler
+    events:
+      - http:
+          method: get
+          path: courses
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COURSES_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+        Resource:
+          - '*'          
+
+  CreateCourse:
+    handler: src/lambda/http/createCourse.handler
+    events:
+      - http:
+          method: post
+          reqValidatorName: RequestBodyValidator
+          path: courses
+          cors: true
+          authorizer: Auth
+          documentation:
+            summary: Create a new course
+            description: Create a new course
+            requestModels:
+              'application/json': CourseCreateRequest
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COURSES_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+        Resource:
+          - '*'
+
+  UpdateCourse:
+    handler: src/lambda/http/updateCourse.handler
+    events:
+      - http:
+          method: patch
+          reqValidatorName: RequestBodyValidator
+          path: courses/{courseId}
+          cors: true
+          authorizer: Auth
+          documentation:
+            summary: Update a new course
+            description: Update a new course
+            requestModels:
+              'application/json': CourseUpdateRequest
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem 
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COURSES_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+        Resource:
+          - '*'          
+
+  DeleteCourse:
+    handler: src/lambda/http/deleteCourse.handler
+    events:
+      - http:
+          method: delete
+          path: courses/{courseId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem 
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COURSES_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+        Resource:
+          - '*'          
+
+  GetCourse:
+    handler: src/lambda/http/getCourse.handler
+    events:
+      - http:
+          method: get
+          path: courses/{courseId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem 
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COURSES_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+        Resource:
+          - '*'   
+
+  GenerateUploadUrl:
+    handler: src/lambda/http/generateUploadUrl.handler
+    events:
+      - http:
+          method: post
+          path: course/{courseId}/attachment
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:*
+        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COURSES_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+        Resource:
+          - '*'            
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET, POST, PUT, DELETE, OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
+
+    CoursesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: courseId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: courseId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.COURSES_TABLE}
+        LocalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.COURSES_CREATED_AT_INDEX}
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: courseId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL                  
+
+    AttachmentsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: ObjectWriter
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - HEAD
+              AllowedOrigins:
+                - "*"
+              MaxAge: 3000
+
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        PolicyDocument:
+          Id: UdacityServerlessCapstoneProject
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: "*"
+              Action: "s3:GetObject"
+              Resource: "arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*"
+        Bucket: !Ref AttachmentsBucket
