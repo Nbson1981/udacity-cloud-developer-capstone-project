@@ -44,6 +44,10 @@ export class Courses extends React.PureComponent<CoursesProps, CoursesState> {
     this.props.history.push(`/courses/${courseId}/edit`)
   }
 
+  onViewButtonClick = (courseId: string) => {
+    this.props.history.push(`/courses/${courseId}`)
+  }
+
   onCourseCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
       const dueDate = this.calculateDueDate()
@@ -172,11 +176,20 @@ export class Courses extends React.PureComponent<CoursesProps, CoursesState> {
                   checked={course.done}
                 />
               </Grid.Column>
-              <Grid.Column width={10} verticalAlign="middle">
+              <Grid.Column width={7} verticalAlign="middle">
                 {course.name}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
                 {course.dueDate}
+              </Grid.Column>
+              <Grid.Column width={1} floated="right">
+                <Button
+                  icon
+                  color="orange"
+                  onClick={() => this.onViewButtonClick(course.courseId)}
+                >
+                  <Icon name="eye" />
+                </Button>
               </Grid.Column>
               <Grid.Column width={1} floated="right">
                 <Button

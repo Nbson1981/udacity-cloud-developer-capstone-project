@@ -4,6 +4,7 @@ import { Grid, Menu, Segment } from 'semantic-ui-react'
 
 import Auth from './auth/Auth'
 import { EditCourse } from './components/EditCourse'
+import { ViewCourse } from './components/ViewCourse'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
 import { Courses } from './components/Courses'
@@ -101,6 +102,14 @@ export default class App extends Component<AppProps, AppState> {
           exact
           render={props => {
             return <EditCourse {...props} auth={this.props.auth} />
+          }}
+        />
+
+        <Route
+          path="/courses/:courseId"
+          exact
+          render={props => {
+            return <ViewCourse {...props} auth={this.props.auth} />
           }}
         />
 
