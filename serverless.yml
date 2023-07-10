@@ -188,7 +188,7 @@ functions:
     events:
       - http:
           method: post
-          path: course/{courseId}/attachment
+          path: courses/{courseId}/attachment
           cors: true
           authorizer: Auth
     iamRoleStatements:
