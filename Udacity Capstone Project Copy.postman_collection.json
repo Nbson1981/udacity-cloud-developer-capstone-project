@@ -39,6 +39,36 @@
 					"response": []
 				},
 				{
+					"name": "Get single course",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/e91f771e-2b6f-405f-bd45-f0c31b24dede",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"courses",
+								"e91f771e-2b6f-405f-bd45-f0c31b24dede"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create course",
 					"request": {
 						"method": "POST",
@@ -57,7 +87,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Water flowers\",\n    \"description\": \"Water flowers\",\n    \"startDate\": \"2019-06-11\",\n    \"instructor\":\"wfsdfsdfsdfsdfsdfds\",\n    \"endDate\": \"2019-06-11\",\n    \"dueDate\":\"\",\n    \"done\":true\n}"
+							"raw": "{\n\t\"name\": \"Water flowers\",\n    \"description\": \"Water flowers\",\n    \"startDate\": \"2019-06-11\",\n    \"instructor\":\"wfsdfsdfsdfsdfsdfds\",\n    \"endDate\": \"2019-06-11\",\n    \"dueDate\":\"\"\n}"
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses",
@@ -95,11 +125,13 @@
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Change the world\",\n\t\"dueDate\": \"2019-12-11\",\n\t\"done\": true\n}"
+							"mode": "file",
+							"file": {
+								"src": "/E:/udacity/cloud-developer/course-04/project/c4-final-project-starter-code/images/import-collection-1.png"
+							}
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/35dd600f-43c2-4649-903c-615e1586a26f",
+							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/e91f771e-2b6f-405f-bd45-f0c31b24dede",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -111,7 +143,7 @@
 							"path": [
 								"dev",
 								"courses",
-								"35dd600f-43c2-4649-903c-615e1586a26f"
+								"e91f771e-2b6f-405f-bd45-f0c31b24dede"
 							]
 						}
 					},
@@ -139,7 +171,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/fe671583-4512-45f6-9475-4265c04362fb",
+							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/e1691515-7886-4606-b820-0c5b3048a8b4",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -151,7 +183,7 @@
 							"path": [
 								"dev",
 								"courses",
-								"fe671583-4512-45f6-9475-4265c04362fb"
+								"e1691515-7886-4606-b820-0c5b3048a8b4"
 							]
 						}
 					},
@@ -169,11 +201,11 @@
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": ""
+							"mode": "urlencoded",
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/3836b777-9bc4-4429-9b79-ba4e4f5f91c0/attachment",
+							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/e91f771e-2b6f-405f-bd45-f0c31b24dede/attachment",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -185,7 +217,7 @@
 							"path": [
 								"dev",
 								"courses",
-								"3836b777-9bc4-4429-9b79-ba4e4f5f91c0",
+								"e91f771e-2b6f-405f-bd45-f0c31b24dede",
 								"attachment"
 							]
 						}

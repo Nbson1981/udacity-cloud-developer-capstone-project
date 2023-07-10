@@ -40,7 +40,7 @@ export class CoursesAccess {
         logger.info('Getting single course that is called')
         const key = {
             "userId": userId,
-            "timerId": courseId
+            "courseId": courseId
           };
         const result = await this.docClient
         .get({
