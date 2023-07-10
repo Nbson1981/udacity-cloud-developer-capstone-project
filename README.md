@@ -1,4 +1,4 @@
-# udacity0-cloud-developer-capstone-project
+[![Build Status](https://app.travis-ci.com/Nbson1981/udacity-cloud-developer-capstone-project.svg?branch=main)](https://app.travis-ci.com/Nbson1981/udacity-cloud-developer-capstone-project)
 
 # Functionality of the application
 
@@ -11,7 +11,6 @@ This api application will allow creating/removing/updating/fetching courses. Eac
 To deploy an application run the following commands:
 
 ```
-cd backend
 npm install
 sls deploy -v
 ```
