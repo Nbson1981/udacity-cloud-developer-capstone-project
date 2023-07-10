@@ -110,7 +110,7 @@
 				{
 					"name": "Update course",
 					"request": {
-						"method": "PUT",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -125,10 +125,8 @@
 							}
 						],
 						"body": {
-							"mode": "file",
-							"file": {
-								"src": "/E:/udacity/cloud-developer/course-04/project/c4-final-project-starter-code/images/import-collection-1.png"
-							}
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\": \"Change the world\",\r\n\t\"dueDate\": \"2019-12-11\",\r\n    \"endDate\": \"2019-12-11\",\r\n    \"startDate\": \"2019-12-11\",\r\n    \"instructor\":\"sdasdasdasdasdas\",\r\n    \"description\":\"sdasdasdasdasdas\",\r\n\t\"done\": true\r\n}"
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/e91f771e-2b6f-405f-bd45-f0c31b24dede",
@@ -201,11 +199,13 @@
 							}
 						],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
+							"mode": "file",
+							"file": {
+								"src": "/E:/udacity/cloud-developer/course-04/project/c4-final-project-starter-code/images/import-collection-3.png"
+							}
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/courses/e91f771e-2b6f-405f-bd45-f0c31b24dede/attachment",
+							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/course/5751c471-e296-4e01-ade5-e910fad0597c/attachment",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -216,8 +216,8 @@
 							],
 							"path": [
 								"dev",
-								"courses",
-								"e91f771e-2b6f-405f-bd45-f0c31b24dede",
+								"course",
+								"5751c471-e296-4e01-ade5-e910fad0597c",
 								"attachment"
 							]
 						}
