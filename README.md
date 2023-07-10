@@ -4,6 +4,11 @@
 
 This api application will allow creating/removing/updating/fetching courses. Each course item can optionally have an  image. Each user only has access to the courses that he/she has owned.
 
+- [x] **A user needs to authenticate in order to use an application home**
+- [x] **The application allows users to create, update, delete/view course items.**
+- [x] **The application allows users to upload a file.**
+- [x] **The application only displays items/courses for a logged in user.**
+
 # How to run the application
 
 ## Backend
